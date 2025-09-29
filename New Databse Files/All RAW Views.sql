@@ -3332,4 +3332,3 @@ FROM tblInvoices t1
     LEFT OUTER JOIN APM_MASTER__DISTRIBUTION t2 ON t1.InvoiceID = t2.InvoiceID 
     LEFT OUTER JOIN APM_MASTER__INVOICE t3 ON t1.InvoiceID = t3.InvoiceID
     where t1.deleted=0 and insertedinap=0 and (previous_day(current_date(),'su') between t1._fivetran_start and t1._fivetran_end) and (previous_day(current_Date(),'su') between t2._fivetran_start and t2._fivetran_end) and (previous_day(current_date(),'su') between t3._fivetran_start and t3._fivetran_end);
-
