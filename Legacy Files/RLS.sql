@@ -1,0 +1,5 @@
+GRANT CREATE TABLE ON SCHEMA rls TO USER (SVC_DATA_LOADER);
+
+select * 
+from PAYROLL_RLS_EMAILS_PAYROLL_SECURITY_RIGHTS_KS
+where email = 'aaron.provencal@kustom.us'
