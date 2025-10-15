@@ -2480,3 +2480,46 @@ from kustom_raw.sage_db_dbo.vw_jct_current__transaction
 where transaction_type = 'Work billed'
 );
 
+-- Option 1: Query your existing views without constraints
+-- This will import all columns but without relationship information
+
+SELECT 
+    'snowflake' AS dbms,
+    c.TABLE_CATALOG,
+    c.TABLE_SCHEMA,
+    c.TABLE_NAME,
+    c.COLUMN_NAME,
+    c.ORDINAL_POSITION,
+    CASE 
+        WHEN c.DATA_TYPE ILIKE 'NUMBER' THEN 
+            'NUMBER(' || COALESCE(c.NUMERIC_PRECISION::VARCHAR, '38') || ',' || 
+            COALESCE(c.NUMERIC_SCALE::VARCHAR, '0') || ')'
+        WHEN c.DATA_TYPE ILIKE 'VARCHAR' THEN
+            'VARCHAR(' || COALESCE(c.CHARACTER_MAXIMUM_LENGTH::VARCHAR, '255') || ')'
+        ELSE UPPER(c.DATA_TYPE)
+    END AS DATA_TYPE,
+    c.CHARACTER_MAXIMUM_LENGTH,
+    NULL AS CONSTRAINT_TYPE,  -- No constraints defined
+    NULL AS REFERENCED_TABLE_SCHEMA,
+    NULL AS REFERENCED_TABLE_NAME,
+    NULL AS REFERENCED_COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS c
+WHERE c.TABLE_SCHEMA IN ('SAGE_DB_DBO', 'DASH', 'PREPARED_COPY', 'REVENUE_MODEL', 'SAGE_DASH_COMPARISON')
+    AND c.TABLE_NAME IN (
+        -- Key views to import
+        'VW_JOBDATA',
+        'VW_JOB_DATA_PREPARED',
+        'VW_INVOICE_AMTS_PREPARED',
+        'VW_INVOICE_META_PREPARED',
+        'VW_INVOICE_PMTS_PREPARED',
+        'VW_REVENUE_MODEL_2',
+        'VW_JOB_DETAIL',
+        'VW_ACCOUNTING_SUMMARY',
+        'VW_INTERNAL_PARTICIPANTS_PIVOT',
+        'VW_JOB_EXTERNAL_PARTICIPANTS'
+    )
+ORDER BY 
+    c.TABLE_CATALOG,
+    c.TABLE_SCHEMA,
+    c.TABLE_NAME,
+    c.ORDINAL_POSITION;
